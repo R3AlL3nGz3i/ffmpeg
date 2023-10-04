@@ -1,0 +1,12 @@
+$inFolder = "D:\backup\synth SRC filler\"
+$inSearch = $inFolder+"*.jpg"
+$outFile  = $inFolder + "framenames.txt"
+Get-childitem -path $inSearch -recurse -name | Out-File $outFile -Encoding ASCII
+
+
+$prependVar = "file "
+$lines      = get-content $outFile
+$newlines   = $lines | ForEach-Object{ "$prependVar$_"}
+$newlines | Out-File $outFile -Encoding ASCII
+
+& "C:/Program Files/ffmpeg/bin/ffmpeg.exe" -f concat -r 10 -i $outFile -c:v libx264 -r 30  -pix_fmt yuv420p out.mp4
